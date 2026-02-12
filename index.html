@@ -1,188 +1,161 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Marcelukas 💘</title>
+  <meta charset="UTF-8">
+  <title>San Valentín 💖</title>
 
-<style>
+  <style>
     body {
-        margin: 0;
-        height: 100vh;
-        overflow: hidden;
-        background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-        font-family: Arial, sans-serif;
-        text-align: center;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+      margin: 0;
+      height: 100vh;
+      background-color: #dba4a9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 90vw;
+      height: 80vh;
+      text-align: center;
+      color: white;
     }
 
     h1 {
-        font-size: 2.2rem;
-        color: white;
-        margin-bottom: 40px;
-        z-index: 2;
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 2rem;
+      margin-bottom: 50px;
     }
 
     button {
-        padding: 16px 32px;
-        font-size: 1.3rem;
-        border: none;
-        border-radius: 16px;
-        cursor: pointer;
-        position: absolute;
-        transition: transform 0.3s ease;
-        z-index: 3;
+      padding: 15px 35px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
 
     #yesBtn {
-        background-color: #ff4d6d;
-        color: white;
+      background-color: #ff4d6d;
+      color: white;
+      position: relative;
+      z-index: 2;
     }
 
     #noBtn {
-        background-color: #444;
-        color: white;
+      background-color: #444;
+      color: white;
+      position: absolute;
     }
 
-    .heart {
-        position: absolute;
-        color: rgba(255,255,255,0.7);
-        font-size: 22px;
-        animation: floatUp 6s linear infinite;
+    #gifContainer {
+      display: none;
+      margin-top: 30px;
     }
 
-    @keyframes floatUp {
-        0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    #gifContainer img {
+      width: 300px;
+      border-radius: 20px;
     }
-
-    img {
-        margin-top: 20px;
-        max-width: 250px;
-        border-radius: 12px;
-    }
-</style>
+  </style>
 </head>
+
 <body>
 
-<h1 id="question">
-    Marcelukas… 💖 <br><br>
-    ¿Aceptarías ser mi San Valentín este año?
-</h1>
+  <div class="container">
+    <h1>Marcelukas... 💖</h1>
+    <p id="message">¿Aceptarías ser mi San Valentín este año?</p>
 
-<button id="yesBtn">SÍIIIIII 😍</button>
-<button id="noBtn">No.</button>
+    <button id="yesBtn">Siiiiii 😍</button>
+    <button id="noBtn">No.</button>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <div id="gifContainer">
+      <img src="https://media.tenor.com/2roX3uxz_68AAAAC/yippee-cat.gif" alt="Yipii Cat">
+    </div>
+  </div>
 
-<script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const question = document.getElementById("question");
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const container = document.querySelector(".container");
+    const message = document.getElementById("message");
+    const gifContainer = document.getElementById("gifContainer");
 
-let yesScale = 1;
-let noClickCount = 0;
+    let scale = 1;
+    let noClickCount = 0;
+    let allowOverlap = false;
 
-// Initial positions
-yesBtn.style.left = "35%";
-yesBtn.style.top = "60%";
-
-noBtn.style.left = "55%";
-noBtn.style.top = "60%";
-
-const noTexts = [
-    "¿Segura? 🥺",
-    "Piensalo otra vez…",
-    "Última oportunidad 👀",
-    "No seas así 😭",
-    "El destino ya decidió 💘",
-    "Ya no tienes opción 😈"
-];
-
-yesBtn.addEventListener("click", () => {
-    document.body.innerHTML = `
-        <h1 style="color:white; margin-top:20vh;">
-            YIPIIIIIII 💖✨ <br>
-            Sabía que dirías que sí 😌
-        </h1>
-        <div style="text-align:center;">
-            <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
-        </div>
-    `;
-
-    confetti({
-        particleCount: 300,
-        spread: 140,
-        origin: { y: 0.6 }
-    });
-});
-
-noBtn.addEventListener("click", () => {
-
-    yesScale += 0.8;
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    if (noClickCount < noTexts.length) {
-        noBtn.innerText = noTexts[noClickCount];
+    function buttonsOverlap(rect1, rect2) {
+      return !(
+        rect1.right < rect2.left ||
+        rect1.left > rect2.right ||
+        rect1.bottom < rect2.top ||
+        rect1.top > rect2.bottom
+      );
     }
 
-    noClickCount++;
+    function moveNoButton() {
+      const containerRect = container.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
 
-    moveNoButton();
-});
+      let newX, newY, noRect;
+      let attempts = 0;
 
-function moveNoButton() {
-
-    let tries = 0;
-    let newX, newY;
-
-    do {
-        newX = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-        newY = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      do {
+        newX = Math.random() * (containerRect.width - 120);
+        newY = Math.random() * (containerRect.height - 60);
 
         noBtn.style.left = newX + "px";
         noBtn.style.top = newY + "px";
 
-        var noRect = noBtn.getBoundingClientRect();
-        var yesRect = yesBtn.getBoundingClientRect();
+        noRect = noBtn.getBoundingClientRect();
+        attempts++;
+      } while (
+        !allowOverlap &&
+        buttonsOverlap(yesRect, noRect) &&
+        attempts < 200
+      );
+    }
 
-        tries++;
+    noBtn.addEventListener("click", () => {
+      noClickCount++;
 
-    } while (
-        noClickCount < 5 &&
-        rectanglesOverlap(yesRect, noRect) &&
-        tries < 100
-    );
-}
+      if (noClickCount < 5) {
+        scale += 0.6; // grows aggressively
+        yesBtn.style.transform = `scale(${scale})`;
+        moveNoButton();
+      } 
+      else if (noClickCount === 5) {
+        message.innerText = "Ya no tienes opción 😈";
+        scale += 0.8;
+        yesBtn.style.transform = `scale(${scale})`;
+        allowOverlap = true;
+        moveNoButton();
+      } 
+      else {
+        // After 5 clicks → No disappears
+        noBtn.style.display = "none";
+      }
+    });
 
-function rectanglesOverlap(r1, r2) {
-    return !(
-        r2.left > r1.right ||
-        r2.right < r1.left ||
-        r2.top > r1.bottom ||
-        r2.bottom < r1.top
-    );
-}
+    yesBtn.addEventListener("click", () => {
+      message.innerText = "Yipiiiii 🥳💖";
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+      gifContainer.style.display = "block";
+    });
 
-// Floating hearts
-function createHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (4 + Math.random() * 3) + "s";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 7000);
-}
-
-setInterval(createHeart, 400);
-
-</script>
+    // Initial position
+    moveNoButton();
+  </script>
 
 </body>
 </html>

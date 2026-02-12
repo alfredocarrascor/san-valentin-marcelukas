@@ -20,23 +20,22 @@
     }
 
     .container {
-        z-index: 2;
         position: relative;
+        z-index: 2;
     }
 
     h1 {
         font-size: 2rem;
         color: white;
         margin-bottom: 30px;
-        transition: opacity 0.5s ease;
+        transition: opacity 0.4s ease;
     }
 
     .buttons {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        flex-wrap: wrap;
         position: relative;
+        width: 300px;
+        height: 150px;
+        margin: 0 auto;
     }
 
     button {
@@ -45,13 +44,13 @@
         border: none;
         border-radius: 14px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
+        transition: transform 0.3s ease;
     }
 
     #yesBtn {
         background-color: #ff4d6d;
         color: white;
+        position: relative;
         z-index: 3;
     }
 
@@ -59,6 +58,8 @@
         background-color: #444;
         color: white;
         position: absolute;
+        left: 180px;
+        top: 0;
     }
 
     /* Floating hearts */
@@ -90,7 +91,8 @@
         Marcelukas… 💖 <br><br>
         ¿Aceptarías ser mi San Valentín este año?
     </h1>
-    <div class="buttons">
+
+    <div class="buttons" id="buttonArea">
         <button id="yesBtn">SÍIIIIII 😍</button>
         <button id="noBtn">No.</button>
     </div>
@@ -103,6 +105,7 @@
     const noBtn = document.getElementById("noBtn");
     const container = document.getElementById("mainContainer");
     const question = document.getElementById("question");
+    const buttonArea = document.getElementById("buttonArea");
 
     let yesScale = 1;
     let noClickCount = 0;
@@ -125,7 +128,7 @@
                     YIPIIIIIII 💖✨ <br>
                     Sabía que dirías que sí 😌
                 </h1>
-                <img src="https://media.tenor.com/3v8m8gCz7X4AAAAi/yippee-cat.gif" alt="Yipii Cat">
+                <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="Yipii Cat">
             `;
 
             confetti({
@@ -134,34 +137,33 @@
                 origin: { y: 0.6 }
             });
 
-        }, 500);
+        }, 400);
     });
 
     noBtn.addEventListener("click", () => {
 
-        // YES BUTTON GROWS MUCH MORE
-        yesScale += 0.6;
+        // YES grows aggressively
+        yesScale += 0.8;
         yesBtn.style.transform = `scale(${yesScale})`;
 
-        // Change NO text
+        // Change text
         if (noClickCount < noTexts.length) {
             noBtn.innerText = noTexts[noClickCount];
         }
-
         noClickCount++;
 
-        // TELEPORT NO BUTTON ANYWHERE ON SCREEN
-        const maxX = window.innerWidth - noBtn.offsetWidth;
-        const maxY = window.innerHeight - noBtn.offsetHeight;
+        // Move inside button area only (so it never disappears)
+        const areaWidth = buttonArea.clientWidth - noBtn.offsetWidth;
+        const areaHeight = buttonArea.clientHeight - noBtn.offsetHeight;
 
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
+        const randomX = Math.random() * areaWidth;
+        const randomY = Math.random() * areaHeight;
 
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
     });
 
-    // Floating hearts generator
+    // Floating hearts
     function createHeart() {
         const heart = document.createElement("div");
         heart.classList.add("heart");

@@ -19,7 +19,7 @@
     .container {
       position: relative;
       width: 90vw;
-      height: 80vh;
+      height: 85vh;
       text-align: center;
       color: white;
     }
@@ -54,6 +54,7 @@
       background-color: #444;
       color: white;
       position: absolute;
+      z-index: 1;
     }
 
     #gifContainer {
@@ -71,7 +72,7 @@
 <body>
 
   <div class="container">
-    <h1>Marcelukas... 💖</h1>
+    <h1 id="title">Marcelukas... 💖</h1>
     <p id="message">¿Aceptarías ser mi San Valentín este año?</p>
 
     <button id="yesBtn">Siiiiii 😍</button>
@@ -87,13 +88,22 @@
     const noBtn = document.getElementById("noBtn");
     const container = document.querySelector(".container");
     const message = document.getElementById("message");
+    const title = document.getElementById("title");
     const gifContainer = document.getElementById("gifContainer");
 
     let scale = 1;
     let noClickCount = 0;
     let allowOverlap = false;
 
-    function buttonsOverlap(rect1, rect2) {
+    const messages = [
+      "¿Seguro? 🥺",
+      "Piénsalo otra vez 😢",
+      "Vamosss 😭",
+      "No seas así 💔",
+      "Ya no tienes opción 😈"
+    ];
+
+    function overlaps(rect1, rect2) {
       return !(
         rect1.right < rect2.left ||
         rect1.left > rect2.right ||
@@ -105,6 +115,8 @@
     function moveNoButton() {
       const containerRect = container.getBoundingClientRect();
       const yesRect = yesBtn.getBoundingClientRect();
+      const messageRect = message.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
 
       let newX, newY, noRect;
       let attempts = 0;
@@ -118,30 +130,35 @@
 
         noRect = noBtn.getBoundingClientRect();
         attempts++;
+
       } while (
-        !allowOverlap &&
-        buttonsOverlap(yesRect, noRect) &&
-        attempts < 200
+        (
+          (!allowOverlap && overlaps(noRect, yesRect)) ||
+          overlaps(noRect, messageRect) ||
+          overlaps(noRect, titleRect)
+        ) && attempts < 300
       );
     }
 
     noBtn.addEventListener("click", () => {
+      if (noClickCount < messages.length) {
+        message.innerText = messages[noClickCount];
+      }
+
       noClickCount++;
 
       if (noClickCount < 5) {
-        scale += 0.6; // grows aggressively
+        scale += 0.6;
         yesBtn.style.transform = `scale(${scale})`;
         moveNoButton();
       } 
       else if (noClickCount === 5) {
-        message.innerText = "Ya no tienes opción 😈";
         scale += 0.8;
         yesBtn.style.transform = `scale(${scale})`;
         allowOverlap = true;
         moveNoButton();
       } 
       else {
-        // After 5 clicks → No disappears
         noBtn.style.display = "none";
       }
     });
@@ -153,7 +170,6 @@
       gifContainer.style.display = "block";
     });
 
-    // Initial position
     moveNoButton();
   </script>
 

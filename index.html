@@ -10,56 +10,42 @@
         margin: 0;
         height: 100vh;
         overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         background: linear-gradient(135deg, #ffdde1, #ee9ca7);
         font-family: Arial, sans-serif;
         text-align: center;
         position: relative;
-    }
-
-    .container {
-        position: relative;
-        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
         color: white;
-        margin-bottom: 30px;
-        transition: opacity 0.4s ease;
-    }
-
-    .button-area {
-        position: relative;
-        width: 400px;
-        height: 220px;
-        margin: 0 auto;
+        margin-bottom: 40px;
+        z-index: 2;
     }
 
     button {
-        padding: 14px 28px;
-        font-size: 1.2rem;
+        padding: 16px 32px;
+        font-size: 1.3rem;
         border: none;
-        border-radius: 14px;
+        border-radius: 16px;
         cursor: pointer;
-        transition: transform 0.3s ease;
         position: absolute;
+        transition: transform 0.3s ease;
+        z-index: 3;
     }
 
     #yesBtn {
         background-color: #ff4d6d;
         color: white;
-        left: 40px;
-        top: 80px;
     }
 
     #noBtn {
         background-color: #444;
         color: white;
-        right: 40px;
-        top: 80px;
     }
 
     .heart {
@@ -80,34 +66,34 @@
         max-width: 250px;
         border-radius: 12px;
     }
-
 </style>
 </head>
 <body>
 
-<div class="container" id="mainContainer">
-    <h1 id="question">
-        Marcelukas… 💖 <br><br>
-        ¿Aceptarías ser mi San Valentín este año?
-    </h1>
+<h1 id="question">
+    Marcelukas… 💖 <br><br>
+    ¿Aceptarías ser mi San Valentín este año?
+</h1>
 
-    <div class="button-area" id="buttonArea">
-        <button id="yesBtn">SÍIIIIII 😍</button>
-        <button id="noBtn">No.</button>
-    </div>
-</div>
+<button id="yesBtn">SÍIIIIII 😍</button>
+<button id="noBtn">No.</button>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-const container = document.getElementById("mainContainer");
 const question = document.getElementById("question");
-const area = document.getElementById("buttonArea");
 
 let yesScale = 1;
 let noClickCount = 0;
+
+// Initial positions
+yesBtn.style.left = "35%";
+yesBtn.style.top = "60%";
+
+noBtn.style.left = "55%";
+noBtn.style.top = "60%";
 
 const noTexts = [
     "¿Segura? 🥺",
@@ -118,29 +104,24 @@ const noTexts = [
     "Ya no tienes opción 😈"
 ];
 
-// YES CLICK
 yesBtn.addEventListener("click", () => {
-    question.style.opacity = 0;
+    document.body.innerHTML = `
+        <h1 style="color:white; margin-top:20vh;">
+            YIPIIIIIII 💖✨ <br>
+            Sabía que dirías que sí 😌
+        </h1>
+        <div style="text-align:center;">
+            <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+        </div>
+    `;
 
-    setTimeout(() => {
-        container.innerHTML = `
-            <h1 style="color:white;">
-                YIPIIIIIII 💖✨ <br>
-                Sabía que dirías que sí 😌
-            </h1>
-            <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="Yipii Cat">
-        `;
-
-        confetti({
-            particleCount: 300,
-            spread: 140,
-            origin: { y: 0.6 }
-        });
-
-    }, 400);
+    confetti({
+        particleCount: 300,
+        spread: 140,
+        origin: { y: 0.6 }
+    });
 });
 
-// NO CLICK
 noBtn.addEventListener("click", () => {
 
     yesScale += 0.8;
@@ -157,29 +138,25 @@ noBtn.addEventListener("click", () => {
 
 function moveNoButton() {
 
-    const areaRect = area.getBoundingClientRect();
-    const yesRect = yesBtn.getBoundingClientRect();
-    const noWidth = noBtn.offsetWidth;
-    const noHeight = noBtn.offsetHeight;
-
     let tries = 0;
     let newX, newY;
 
     do {
-        newX = Math.random() * (area.clientWidth - noWidth);
-        newY = Math.random() * (area.clientHeight - noHeight);
+        newX = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        newY = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
         noBtn.style.left = newX + "px";
         noBtn.style.top = newY + "px";
 
         var noRect = noBtn.getBoundingClientRect();
+        var yesRect = yesBtn.getBoundingClientRect();
 
         tries++;
 
     } while (
         noClickCount < 5 &&
         rectanglesOverlap(yesRect, noRect) &&
-        tries < 50
+        tries < 100
     );
 }
 
@@ -200,7 +177,6 @@ function createHeart() {
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.animationDuration = (4 + Math.random() * 3) + "s";
     document.body.appendChild(heart);
-
     setTimeout(() => heart.remove(), 7000);
 }
 

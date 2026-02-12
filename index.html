@@ -14,13 +14,14 @@
         justify-content: center;
         align-items: center;
         background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-        font-family: 'Arial', sans-serif;
+        font-family: Arial, sans-serif;
         text-align: center;
         position: relative;
     }
 
     .container {
         z-index: 2;
+        position: relative;
     }
 
     h1 {
@@ -35,33 +36,36 @@
         gap: 20px;
         justify-content: center;
         flex-wrap: wrap;
+        position: relative;
     }
 
     button {
-        padding: 12px 24px;
-        font-size: 1.1rem;
+        padding: 14px 28px;
+        font-size: 1.2rem;
         border: none;
-        border-radius: 12px;
+        border-radius: 14px;
         cursor: pointer;
         transition: all 0.3s ease;
+        position: relative;
     }
 
     #yesBtn {
         background-color: #ff4d6d;
         color: white;
+        z-index: 3;
     }
 
     #noBtn {
         background-color: #444;
         color: white;
-        position: relative;
+        position: absolute;
     }
 
     /* Floating hearts */
     .heart {
         position: absolute;
-        color: rgba(255,255,255,0.6);
-        font-size: 20px;
+        color: rgba(255,255,255,0.7);
+        font-size: 22px;
         animation: floatUp 6s linear infinite;
     }
 
@@ -69,6 +73,12 @@
         0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
         50% { opacity: 1; }
         100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    img {
+        margin-top: 20px;
+        max-width: 250px;
+        border-radius: 12px;
     }
 
 </style>
@@ -102,7 +112,8 @@
         "Piensalo otra vez…",
         "Última oportunidad 👀",
         "No seas así 😭",
-        "El destino ya decidió 💘"
+        "El destino ya decidió 💘",
+        "Ya no tienes opción 😈"
     ];
 
     yesBtn.addEventListener("click", () => {
@@ -111,14 +122,15 @@
         setTimeout(() => {
             container.innerHTML = `
                 <h1 style="color:white;">
-                    YIPIIIIIII 💖✨ <br><br>
+                    YIPIIIIIII 💖✨ <br>
                     Sabía que dirías que sí 😌
                 </h1>
+                <img src="https://media.tenor.com/3v8m8gCz7X4AAAAi/yippee-cat.gif" alt="Yipii Cat">
             `;
 
             confetti({
-                particleCount: 200,
-                spread: 120,
+                particleCount: 300,
+                spread: 140,
                 origin: { y: 0.6 }
             });
 
@@ -126,19 +138,27 @@
     });
 
     noBtn.addEventListener("click", () => {
-        yesScale += 0.3;
+
+        // YES BUTTON GROWS MUCH MORE
+        yesScale += 0.6;
         yesBtn.style.transform = `scale(${yesScale})`;
 
+        // Change NO text
         if (noClickCount < noTexts.length) {
             noBtn.innerText = noTexts[noClickCount];
         }
 
         noClickCount++;
 
-        // Make "No" move randomly
-        const x = Math.random() * 200 - 100;
-        const y = Math.random() * 200 - 100;
-        noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        // TELEPORT NO BUTTON ANYWHERE ON SCREEN
+        const maxX = window.innerWidth - noBtn.offsetWidth;
+        const maxY = window.innerHeight - noBtn.offsetHeight;
+
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+
+        noBtn.style.left = randomX + "px";
+        noBtn.style.top = randomY + "px";
     });
 
     // Floating hearts generator
@@ -155,7 +175,7 @@
         }, 7000);
     }
 
-    setInterval(createHeart, 500);
+    setInterval(createHeart, 400);
 
 </script>
 
